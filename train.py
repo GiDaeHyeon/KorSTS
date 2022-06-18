@@ -23,14 +23,14 @@ logger = TensorBoardLogger(
                            )
 
 checkpoint_callback = ModelCheckpoint(
-                                     monitor='val_loss',
+                                     monitor='validation_loss',
                                      dirpath='CKPT_DIR',
                                      filename='KoSBERT_regression',
                                      mode='min'
                                      )
 
 early_stop_callback = EarlyStopping(
-                                    monitor='val_loss',
+                                    monitor='validation_loss',
                                     min_delta=1e-4,
                                     patience=5,
                                     verbose=True,
