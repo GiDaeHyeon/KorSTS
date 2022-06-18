@@ -23,8 +23,8 @@ class BaseTrainer(LightningModule):
 
     def configure_optimizers(self) -> list:
         optimizer = optim.AdamW(lr=self.learning_rate,
-                                params=self.sentence_bert.head.parameters())
-        return [optimizer]
+                                params=self.sentence_bert.parameters())
+        return optimizer
 
     def forward(self,
                 input_ids: torch.Tensor,

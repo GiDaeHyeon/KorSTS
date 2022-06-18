@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from layers import MeanPooling, LanguageModel
+from .layers import MeanPooling, LanguageModel
 
 
 class SentenceTransformer(nn.Module):
@@ -33,4 +33,4 @@ class SentenceTransformer(nn.Module):
                                          token_type_ids=token_type_ids).last_hidden_state
         output = self.head(output)
         features = {'token_embeddings': output, 'attention_mask': attention_mask}
-        return self.pooling(features)
+        return self.pooling(features).float()

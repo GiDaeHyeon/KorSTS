@@ -14,10 +14,9 @@ class BaseDataset(Dataset):
             raise NotImplementedError('phase must be train, validation or test')
 
         if weight is None:
-            if weight is None:
-                raise NotImplementedError('weight must be declared.')
-            else:
-                self.tokenizer = AutoTokenizer.from_pretrained(weight)
+            raise NotImplementedError('weight must be declared.')
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(weight)
 
         if dataset not in ['nli', 'sts']:
             raise NotImplementedError('dataset must be declared (sts or nli)')
@@ -50,11 +49,11 @@ class NLIDataset(BaseDataset):
 
 class STSDataset(BaseDataset):
     def __getitem__(self, idx) -> tuple:
-        sentence1, sentence2 = self.dataset[idx]
-        sentence1 = self.tokenize(sentence1['sentence1'])
-        sentence2 = self.tokenize(sentence2['sentence2'])
-        label = self.dataset.get('labels').get('real-label')
-        return sentence1, sentence2, label
+        sentences = self.dataset[idx]
+        sentence1 = self.tokenize(sentences['sentence1'])
+        sentence2 = self.tokenize(sentences['sentence2'])
+        label = sentences.get('labels').get('real-label')
+        return sentence1, sentence2, torch.tensor(label).float()
 
 
 class DataModule(LightningDataModule):
@@ -74,7 +73,9 @@ class DataModule(LightningDataModule):
             self.test_set = NLIDataset(dataset=dataset, phase='test', weight=weight)
         self.batch_size = batch_size
 
-        if num_workers is None:
+        if device_count() == 0 and num_workers is None:
+            self.num_workers = 1
+        elif device_count() != 0 and num_workers is None:
             self.num_workers = device_count() * 4
         else:
             self.num_workers = num_workers

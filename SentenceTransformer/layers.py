@@ -35,5 +35,4 @@ class MeanPooling(nn.Module):
 
         sum_mask = torch.clamp(sum_mask, min=1e-9)
         output_vector = sum_embeddings / sum_mask
-        features['sentence_embedding'] = output_vector
-        return features
+        return output_vector
